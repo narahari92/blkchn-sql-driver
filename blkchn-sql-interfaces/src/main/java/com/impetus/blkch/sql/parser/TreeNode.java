@@ -15,13 +15,21 @@
 ******************************************************************************/
 package com.impetus.blkch.sql.parser;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TreeNode {
+import com.impetus.blkch.BlkchnException;
+
+public class TreeNode implements Cloneable, Serializable {
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5244526440190973169L;
 
     private static final Logger logger = LoggerFactory.getLogger(TreeNode.class);
 
@@ -175,5 +183,23 @@ public class TreeNode {
         	hash += this.getChildNode(i).hashWithDepth(level + 1) * (i + 1);
         }
         return hash;
+    }
+    
+    @Override
+    public Object clone()  {
+        TreeNode root;
+        try {
+            root = (TreeNode) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new BlkchnException("Cannot perform clone of " + this.getClass().getName() + " class", e);
+        }
+        root.parent = null;
+        root.childNodes = new ArrayList<>();
+        for(TreeNode child : childNodes) {
+            TreeNode newChild = (TreeNode) child.clone();
+            root.addChildNode(newChild);
+            newChild.setParent(root);
+        }
+        return root;
     }
 }
