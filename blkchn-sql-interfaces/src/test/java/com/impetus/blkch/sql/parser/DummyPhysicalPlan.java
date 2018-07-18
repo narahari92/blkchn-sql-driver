@@ -16,7 +16,9 @@
 package com.impetus.blkch.sql.parser;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.impetus.blkch.util.BigIntegerRangeOperations;
 import com.impetus.blkch.util.LongRangeOperations;
@@ -62,6 +64,11 @@ public class DummyPhysicalPlan extends PhysicalPlan
     @Override
     public boolean columnExists(String table, String column) {
         return true;
+    }
+
+    @Override
+    public Map<String, Integer> columnTypeMap(String table) {
+        return new HashMap<>();
     }
     
 
