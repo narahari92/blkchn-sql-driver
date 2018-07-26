@@ -34,11 +34,10 @@ class BlkchnRDD[R: ClassTag](@transient sc: SparkContext,
         val columnCount = metadata.getColumnCount
         while(rs.next()) {
           val rowVals = (for(i <- 1 to columnCount) yield {
-            if((metadata.getColumnLabel(i).equalsIgnoreCase("nonce") || metadata.getColumnName(i).equalsIgnoreCase("nonce"))
-            && (rs.getObject(i).isInstanceOf[BigInteger])){
-              (rs.getString(i).asInstanceOf[Any], StructField(metadata.getColumnLabel(i), StringType, true))
-            }
-            else
+            if(rs.getObject(i).isInstanceOf[BigInteger]){
+              val dataValue = new BigDecimal(new java.math.BigDecimal(new BigInteger(rs.getObject(i).toString)))
+              (dataValue.asInstanceOf[Any], StructField(metadata.getColumnLabel(i), DecimalType(38,0), true))
+            } else
               (rs.getObject(i).asInstanceOf[Any], getStructField(i, metadata))
           }).toArray
           buffer = buffer :+ new GenericRowWithSchema(rowVals.map(_._1), StructType(rowVals.map(_._2))).asInstanceOf[R]
@@ -51,10 +50,10 @@ class BlkchnRDD[R: ClassTag](@transient sc: SparkContext,
     metadata.getColumnType(index) match {
       case BlkType.JAVA_LIST_STRING => return StructField(metadata.getColumnLabel(index), ArrayType(StringType, true), true)
       case BlkType.JAVA_LIST_INTEGER => return StructField(metadata.getColumnLabel(index), ArrayType(IntegerType, true), true)
-      case Types.BIGINT => return StructField(metadata.getColumnLabel(index), DecimalType(38,0), true)
       case _=> val dataType = metadata.getColumnType(index) match {
         case Types.INTEGER => IntegerType
         case Types.DOUBLE => DoubleType
+        case Types.BIGINT => LongType
         case Types.FLOAT => FloatType
         case Types.BOOLEAN => BooleanType
         case _ => StringType
