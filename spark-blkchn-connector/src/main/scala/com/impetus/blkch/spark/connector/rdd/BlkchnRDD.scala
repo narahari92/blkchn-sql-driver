@@ -10,8 +10,10 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema
 import org.apache.spark.sql.types._
 import org.apache.spark.{Dependency, Partition, SparkContext, TaskContext}
-import org.apache.spark.sql.catalyst.util.{ArrayData, GenericArrayData}
+import org.web3j.protocol.core.methods.response.EthBlock.TransactionResult
+import org.web3j.protocol.core.methods.response.Transaction
 import java.math.BigInteger
+import scala.collection.JavaConverters._
 
 import scala.reflect.ClassTag
 
@@ -37,6 +39,9 @@ class BlkchnRDD[R: ClassTag](@transient sc: SparkContext,
             if(rs.getObject(i).isInstanceOf[BigInteger]){
               val dataValue = new BigDecimal(new java.math.BigDecimal(new BigInteger(rs.getObject(i).toString)))
               (dataValue.asInstanceOf[Any], StructField(metadata.getColumnLabel(i), DecimalType(38,0), true))
+            } else if(metadata.getColumnName(i).equalsIgnoreCase("transactions") ){//|| metadata.getColumnType(i) == 0
+              val transactionList = rs.getObject(i).asInstanceOf[java.util.ArrayList[TransactionResult[Transaction]]].asScala.map(x => new TransactionType(x.get()))
+              (transactionList.asInstanceOf[Any],StructField(metadata.getColumnLabel(i), ArrayType(TransactionUTD, true), true))
             } else
               (rs.getObject(i).asInstanceOf[Any], getStructField(i, metadata))
           }).toArray
