@@ -4,7 +4,6 @@ import java.sql.{ResultSetMetaData, Types}
 
 import com.impetus.blkch.spark.connector.rdd.partitioner.BlkchnPartition
 import com.impetus.blkch.spark.connector.BlkchnConnector
-import com.impetus.blkch.sql.BlkType
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema
@@ -39,9 +38,13 @@ class BlkchnRDD[R: ClassTag](@transient sc: SparkContext,
             if(rs.getObject(i).isInstanceOf[BigInteger]){
               val dataValue = new BigDecimal(new java.math.BigDecimal(new BigInteger(rs.getObject(i).toString)))
               (dataValue.asInstanceOf[Any], StructField(metadata.getColumnLabel(i), DecimalType(38,0), true))
-            } else if(metadata.getColumnName(i).equalsIgnoreCase("transactions") ){//|| metadata.getColumnType(i) == 0
+            } else if(metadata.getColumnName(i).equalsIgnoreCase("transactions") &&
+              rs.getObject(i).isInstanceOf[java.util.ArrayList[TransactionResult[Transaction]]]){
               val transactionList = rs.getObject(i).asInstanceOf[java.util.ArrayList[TransactionResult[Transaction]]].asScala.map(x => new TransactionType(x.get()))
               (transactionList.asInstanceOf[Any],StructField(metadata.getColumnLabel(i), ArrayType(TransactionUTD, true), true))
+            } else if(rs.getObject(i).isInstanceOf[java.util.ArrayList[String]]){
+              val strList = rs.getObject(i).asInstanceOf[java.util.ArrayList[String]].asScala
+              (strList.asInstanceOf[Any], StructField(metadata.getColumnLabel(i), ArrayType(StringType, true), true))
             } else
               (rs.getObject(i).asInstanceOf[Any], getStructField(i, metadata))
           }).toArray
@@ -52,10 +55,7 @@ class BlkchnRDD[R: ClassTag](@transient sc: SparkContext,
   }
 
   private def getStructField(index: Int, metadata: ResultSetMetaData): StructField = {
-    metadata.getColumnType(index) match {
-      case BlkType.JAVA_LIST_STRING => return StructField(metadata.getColumnLabel(index), ArrayType(StringType, true), true)
-      case BlkType.JAVA_LIST_INTEGER => return StructField(metadata.getColumnLabel(index), ArrayType(IntegerType, true), true)
-      case _=> val dataType = metadata.getColumnType(index) match {
+    val dataType = metadata.getColumnType(index) match {
         case Types.INTEGER => IntegerType
         case Types.DOUBLE => DoubleType
         case Types.BIGINT => LongType
@@ -63,9 +63,7 @@ class BlkchnRDD[R: ClassTag](@transient sc: SparkContext,
         case Types.BOOLEAN => BooleanType
         case _ => StringType
       }
-        StructField(metadata.getColumnLabel(index), dataType, true)
-    }
-
+    StructField(metadata.getColumnLabel(index), dataType, true)
   }
 
 }
