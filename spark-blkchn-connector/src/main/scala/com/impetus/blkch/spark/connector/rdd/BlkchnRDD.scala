@@ -10,6 +10,8 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema
 import org.apache.spark.sql.types._
 import org.apache.spark.{Dependency, Partition, SparkContext, TaskContext}
+import org.apache.spark.sql.catalyst.util.{ArrayData, GenericArrayData}
+import java.math.BigInteger
 
 import scala.reflect.ClassTag
 
@@ -32,7 +34,12 @@ class BlkchnRDD[R: ClassTag](@transient sc: SparkContext,
         val columnCount = metadata.getColumnCount
         while(rs.next()) {
           val rowVals = (for(i <- 1 to columnCount) yield {
-            (rs.getObject(i).asInstanceOf[Any], getStructField(i, metadata))
+            if((metadata.getColumnLabel(i).equalsIgnoreCase("nonce") || metadata.getColumnName(i).equalsIgnoreCase("nonce"))
+            && (rs.getObject(i).isInstanceOf[BigInteger])){
+              (rs.getString(i).asInstanceOf[Any], StructField(metadata.getColumnLabel(i), StringType, true))
+            }
+            else
+              (rs.getObject(i).asInstanceOf[Any], getStructField(i, metadata))
           }).toArray
           buffer = buffer :+ new GenericRowWithSchema(rowVals.map(_._1), StructType(rowVals.map(_._2))).asInstanceOf[R]
         }
@@ -44,9 +51,9 @@ class BlkchnRDD[R: ClassTag](@transient sc: SparkContext,
     metadata.getColumnType(index) match {
       case BlkType.JAVA_LIST_STRING => return StructField(metadata.getColumnLabel(index), ArrayType(StringType, true), true)
       case BlkType.JAVA_LIST_INTEGER => return StructField(metadata.getColumnLabel(index), ArrayType(IntegerType, true), true)
+      case Types.BIGINT => return StructField(metadata.getColumnLabel(index), DecimalType(38,0), true)
       case _=> val dataType = metadata.getColumnType(index) match {
         case Types.INTEGER => IntegerType
-        case Types.BIGINT => DecimalType(38,0)
         case Types.DOUBLE => DoubleType
         case Types.FLOAT => FloatType
         case Types.BOOLEAN => BooleanType
@@ -58,3 +65,9 @@ class BlkchnRDD[R: ClassTag](@transient sc: SparkContext,
   }
 
 }
+
+
+
+
+
+
