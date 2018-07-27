@@ -209,6 +209,9 @@ public abstract class PhysicalPlan extends TreeNode {
         if (!logicalPlan.getType().equals(SQLType.QUERY)) {
             return this;
         }
+        Table table = logicalPlan.getQuery().getChildType(FromItem.class, 0).getChildType(Table.class, 0);
+        String tableName = table.getChildType(IdentifierNode.class, 0).getValue();
+        rangeNode.setTable(tableName);
         PhysicalPlan paginatedPlan = (PhysicalPlan) this.clone();
         if(whereClause == null) {
             paginatedPlan.whereClause = new WhereClause();

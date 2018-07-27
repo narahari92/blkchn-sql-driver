@@ -68,40 +68,6 @@ private[sql] class TransactionUTD extends UserDefinedType[TransactionType] {
           if(values.getUTF8String(15) != null) values.getUTF8String(0).toString else null,
           if(values.getUTF8String(15) != null) values.getUTF8String(16).toString.toInt else 0
         )
-        /*values.getUTF8String(1).toString
-        values.getUTF8String(2).toString
-        values.getUTF8String(3).toString
-        values.getUTF8String(4).toString
-        values.getUTF8String(5).toString
-        values.getUTF8String(6).toString
-        values.getUTF8String(7).toString
-        values.getUTF8String(8).toString
-        values.getUTF8String(9).toString
-        values.getUTF8String(10).toString
-        values.getUTF8String(11).toString
-        values.getUTF8String(12).toString
-        values.getUTF8String(13).toString
-        values.getUTF8String(14).toString
-        values.getUTF8String(15).toString
-        values.getUTF8String(16).toString.toInt
-        val trn = new Transaction(values.getUTF8String(0).toString,
-          values.getUTF8String(1).toString,
-          values.getUTF8String(2).toString,
-          values.getUTF8String(3).toString,
-          values.getUTF8String(4).toString,
-          values.getUTF8String(5).toString,
-          values.getUTF8String(6).toString,
-          values.getUTF8String(7).toString,
-          values.getUTF8String(8).toString,
-          values.getUTF8String(9).toString,
-          values.getUTF8String(10).toString,
-          values.getUTF8String(11).toString,
-          values.getUTF8String(12).toString,
-          values.getUTF8String(13).toString,
-          values.getUTF8String(14).toString,
-          values.getUTF8String(15).toString,
-          values.getUTF8String(16).toString.toInt)
-          */
         new TransactionType(trn)
     }
   }

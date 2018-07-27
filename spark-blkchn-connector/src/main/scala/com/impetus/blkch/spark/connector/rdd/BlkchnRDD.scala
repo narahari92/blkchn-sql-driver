@@ -12,8 +12,9 @@ import org.apache.spark.{Dependency, Partition, SparkContext, TaskContext}
 import org.web3j.protocol.core.methods.response.EthBlock.TransactionResult
 import org.web3j.protocol.core.methods.response.Transaction
 import java.math.BigInteger
-import scala.collection.JavaConverters._
+import java.util
 
+import scala.collection.JavaConverters._
 import scala.reflect.ClassTag
 
 class BlkchnRDD[R: ClassTag](@transient sc: SparkContext,
@@ -42,11 +43,12 @@ class BlkchnRDD[R: ClassTag](@transient sc: SparkContext,
               rs.getObject(i).isInstanceOf[java.util.ArrayList[TransactionResult[Transaction]]]){
               val transactionList = rs.getObject(i).asInstanceOf[java.util.ArrayList[TransactionResult[Transaction]]].asScala.map(x => new TransactionType(x.get()))
               (transactionList.asInstanceOf[Any],StructField(metadata.getColumnLabel(i), ArrayType(TransactionUTD, true), true))
-            } else if(rs.getObject(i).isInstanceOf[java.util.ArrayList[String]]){
-              val strList = rs.getObject(i).asInstanceOf[java.util.ArrayList[String]].asScala
-              (strList.asInstanceOf[Any], StructField(metadata.getColumnLabel(i), ArrayType(StringType, true), true))
-            } else
-              (rs.getObject(i).asInstanceOf[Any], getStructField(i, metadata))
+            } else rs.getObject(i) match {
+              case lstValue: util.ArrayList[String] =>
+                val strList = lstValue.asScala
+                (strList.asInstanceOf[Any], StructField(metadata.getColumnLabel(i), ArrayType(StringType, true), true))
+              case _ => (rs.getObject(i).asInstanceOf[Any], getStructField(i, metadata))
+            }
           }).toArray
           buffer = buffer :+ new GenericRowWithSchema(rowVals.map(_._1), StructType(rowVals.map(_._2))).asInstanceOf[R]
         }
