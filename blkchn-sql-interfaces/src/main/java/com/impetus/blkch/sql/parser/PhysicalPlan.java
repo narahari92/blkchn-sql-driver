@@ -118,14 +118,20 @@ public abstract class PhysicalPlan extends TreeNode {
         TreeNode secondChild;
         if (logicalOperation.getChildNode(0) instanceof LogicalOperation) {
             firstChild = processLogicalOperation((LogicalOperation) logicalOperation.getChildNode(0));
-        } else {
+        } else if (logicalOperation.getChildNode(0) instanceof FilterItem) {
             firstChild = processFilterItem((FilterItem)logicalOperation.getChildNode(0));
+        } else {
+            firstChild = (TreeNode) logicalOperation.getChildNode(0).clone();
         }
+
         if (logicalOperation.getChildNode(1) instanceof LogicalOperation) {
             secondChild = processLogicalOperation((LogicalOperation) logicalOperation.getChildNode(1));
-        } else {
+        } else if (logicalOperation.getChildNode(1) instanceof FilterItem) {
             secondChild = processFilterItem((FilterItem)logicalOperation.getChildNode(1));
+        } else {
+            secondChild = (TreeNode) logicalOperation.getChildNode(1).clone();
         }
+
         if((firstChild instanceof RangeNode<?>) && (secondChild instanceof RangeNode<?>)) {
             RangeNode<?> firstRange = (RangeNode<?>)firstChild;
             RangeNode<?> secondRange = (RangeNode<?>)secondChild;
