@@ -38,6 +38,7 @@ import com.impetus.blkch.sql.function.PolicyFile;
 import com.impetus.blkch.sql.function.UpgradeFunction;
 import com.impetus.blkch.sql.function.Version;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser;
+import com.impetus.blkch.sql.generated.BlkchnSqlParser.AffiliationContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.ArgsContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.AssetContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.BooleanLiteralContext;
@@ -50,6 +51,7 @@ import com.impetus.blkch.sql.generated.BlkchnSqlParser.ColumnValuesContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.ComparisonContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.ComparisonOperatorContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.CreateAssetContext;
+import com.impetus.blkch.sql.generated.BlkchnSqlParser.CreateUserContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.DeleteFunctionContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.DereferenceContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.DropAssetContext;
@@ -67,6 +69,7 @@ import com.impetus.blkch.sql.generated.BlkchnSqlParser.OrderByClauseContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.ParameterValuesContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.PolicyFileContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.RecordDelimiterContext;
+import com.impetus.blkch.sql.generated.BlkchnSqlParser.SecretContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.SelectClauseContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.SetQuantifierContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.SimpleQueryContext;
@@ -109,6 +112,10 @@ import com.impetus.blkch.sql.query.SelectItem;
 import com.impetus.blkch.sql.query.StarNode;
 import com.impetus.blkch.sql.query.Table;
 import com.impetus.blkch.sql.query.WhereClause;
+import com.impetus.blkch.sql.user.Affiliation;
+import com.impetus.blkch.sql.user.CreateUser;
+import com.impetus.blkch.sql.user.Secret;
+import com.impetus.blkch.util.Utilities;
 
 public class BlockchainVisitor extends AbstractSyntaxTreeVisitor {
 
@@ -125,6 +132,7 @@ public class BlockchainVisitor extends AbstractSyntaxTreeVisitor {
     DeleteFunction deleteFunction;
     DropAsset dropAsset;
     UpgradeFunction upgradeFunction;
+    CreateUser createUser;
 
     @Override
     public LogicalPlan visitSimpleQuery(SimpleQueryContext ctx) {
@@ -546,6 +554,34 @@ public class BlockchainVisitor extends AbstractSyntaxTreeVisitor {
         logicalPlan.setUpgradeFunction(upgradeFunction);
         logicalPlan.setCurrentNode(upgradeFunction);
         logicalPlan.setType(SQLType.UPGRADE_FUNCTION);
+        return visitChildrenAndResetNode(ctx);
+    }
+    
+    @Override
+    public LogicalPlan visitCreateUser(CreateUserContext ctx) {
+        logger.trace("In visitCreateUser " + ctx.getText());
+        createUser = new CreateUser();
+        logicalPlan.setCreateUser(createUser);
+        logicalPlan.setCurrentNode(createUser);
+        logicalPlan.setType(SQLType.CREATE_USER);
+        return visitChildrenAndResetNode(ctx);
+    }
+    
+    @Override
+    public LogicalPlan visitSecret(SecretContext ctx) {
+        logger.trace("In visitSecret " + ctx.getText());
+        Secret secret = new Secret(Utilities.unquote(ctx.getText()));
+        logicalPlan.getCurrentNode().addChildNode(secret);
+        logicalPlan.setCurrentNode(secret);
+        return visitChildrenAndResetNode(ctx);
+    }
+    
+    @Override
+    public LogicalPlan visitAffiliation(AffiliationContext ctx) {
+        logger.trace("In visitAffiliation " + ctx.getText());
+        Affiliation affiliation = new Affiliation(ctx.getText());
+        logicalPlan.getCurrentNode().addChildNode(affiliation);
+        logicalPlan.setCurrentNode(affiliation);
         return visitChildrenAndResetNode(ctx);
     }
 

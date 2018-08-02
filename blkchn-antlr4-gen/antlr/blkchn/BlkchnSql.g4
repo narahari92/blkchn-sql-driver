@@ -41,6 +41,20 @@ statement
     | deleteFunction                                               #deleteFunctionRule
     | dropAsset                                                    #dropAssetRule
     | upgradeFunction                                              #upgradeFunctionRule
+    | createUser                                                   #createUserRule
+    ;
+    
+createUser
+    : CREATE USER identifier IDENTIFIED BY secret AFFILIATED TO affiliation
+    ;
+    
+secret
+    : STRING
+    ;
+    
+affiliation
+    : IDENTIFIER
+    | NESTED_IDENTIFIER
     ;
     
 insertInto
@@ -512,6 +526,9 @@ FIELDS: 'FIELDS';
 RECORDS: 'RECORDS';
 DELIMITED: 'DELIMITED';
 UPGRADE: 'UPGRADE';
+USER: 'USER';
+IDENTIFIED: 'IDENTIFIED';
+AFFILIATED: 'AFFILIATED';
 
 IF: 'IF';
 
@@ -600,6 +617,10 @@ BIGDECIMAL_LITERAL
 
 IDENTIFIER
     : (LETTER | DIGIT | '_')+
+    ;
+    
+NESTED_IDENTIFIER
+    : IDENTIFIER ('.' IDENTIFIER)+
     ;
 
 BACKQUOTED_IDENTIFIER

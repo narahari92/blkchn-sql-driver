@@ -65,6 +65,9 @@ import com.impetus.blkch.sql.query.SelectItem;
 import com.impetus.blkch.sql.query.StarNode;
 import com.impetus.blkch.sql.query.Table;
 import com.impetus.blkch.sql.query.WhereClause;
+import com.impetus.blkch.sql.user.Affiliation;
+import com.impetus.blkch.sql.user.CreateUser;
+import com.impetus.blkch.sql.user.Secret;
 
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -393,7 +396,15 @@ public class LogicalPlanTest extends TestCase {
         DropAsset expected = buildDropAsset();
         assertEquals(expected, actual);
     }
-
+    
+    @Test
+    public void testCreateUser() {
+        String sql = "CREATE USER myuser identified by 'mypassword' affiliated to org1.dept1";
+        LogicalPlan plan = getLogicalPlan(sql);
+        CreateUser actual = plan.getCreateUser();
+        CreateUser expected = buildCreateUser();
+        assertEquals(expected, actual);
+    }
 
     @Test(expected =  BlkchnException.class)
     public void testWrongQuery() {
@@ -603,6 +614,14 @@ public class LogicalPlanTest extends TestCase {
         asset.addChildNode(new IdentifierNode("assetchain"));
         dropAsset.addChildNode(asset);
         return dropAsset;
+    }
+    
+    private CreateUser buildCreateUser() {
+        CreateUser createUser = new CreateUser();
+        createUser.addChildNode(new IdentifierNode("myuser"));
+        createUser.addChildNode(new Secret("mypassword"));
+        createUser.addChildNode(new Affiliation("org1.dept1"));
+        return createUser;
     }
 
     public LogicalPlan getLogicalPlan(String sqlText) {
