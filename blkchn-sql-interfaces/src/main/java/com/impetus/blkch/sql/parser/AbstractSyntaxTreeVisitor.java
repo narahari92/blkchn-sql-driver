@@ -52,6 +52,7 @@ import com.impetus.blkch.sql.generated.BlkchnSqlParser.ConstantDefaultContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.ConstantSeqContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.CreateAssetContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.CreateAssetRuleContext;
+import com.impetus.blkch.sql.generated.BlkchnSqlParser.CreateFlagContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.CreateFunctionContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.CreateFunctionRuleContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.CreateUserContext;
@@ -136,6 +137,7 @@ import com.impetus.blkch.sql.generated.BlkchnSqlParser.TimeFunctionCallContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.TinyIntLiteralContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.TypeConstructorContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.UnquotedIdentifierContext;
+import com.impetus.blkch.sql.generated.BlkchnSqlParser.UpgradeFlagContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.UpgradeFunctionContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.UpgradeFunctionRuleContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.ValueExpressionDefaultContext;
@@ -970,6 +972,18 @@ public abstract class AbstractSyntaxTreeVisitor extends AbstractParseTreeVisitor
     @Override
     public LogicalPlan visitAffiliation(AffiliationContext ctx) {
         logger.trace("In visitAffiliation " + ctx.getText());
+        return visitChildren(ctx);
+    }
+
+    @Override
+    public LogicalPlan visitCreateFlag(CreateFlagContext ctx) {
+        logger.trace("In visitCreateFlag " + ctx.getText());
+        return visitChildren(ctx);
+    }
+
+    @Override
+    public LogicalPlan visitUpgradeFlag(UpgradeFlagContext ctx) {
+        logger.trace("In visitUpgradeFlag " + ctx.getText());
         return visitChildren(ctx);
     }
 
