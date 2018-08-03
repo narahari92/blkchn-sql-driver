@@ -283,7 +283,7 @@ public abstract class AbstractQueryExecutor {
         return new DataNode<>(first.getTable(), newKeys);
     }
 
-    public RangeNode getProbableRange(){
+    public <T extends Number & Comparable<T>> RangeNode<T> getProbableRange(){
         WhereClause whereClause = this.physicalPlan.getWhereClause();
         if(whereClause != null) {
         whereClause.traverse();
@@ -302,7 +302,7 @@ public abstract class AbstractQueryExecutor {
         }
     }
 
-    private RangeNode processLogicalOperationForRange(LogicalOperation logicalOperation){
+    private <T extends Number & Comparable<T>> RangeNode<T> processLogicalOperationForRange(LogicalOperation logicalOperation){
         TreeNode firstChild = logicalOperation.getChildNode(0);
         TreeNode secondChild = logicalOperation.getChildNode(1);
 
@@ -327,7 +327,7 @@ public abstract class AbstractQueryExecutor {
             RangeNode<?> secondRange = (RangeNode<?>)secondChild;
             String table = logicalPlan.getQuery().getChildType(FromItem.class, 0).getChildType(Table.class, 0).
                     getChildType(IdentifierNode.class, 0).getValue();
-            RangeOperations<?> rangeOperations = this.physicalPlan.getRangeOperations(table, firstRange.getColumn());
+            RangeOperations<T> rangeOperations = this.physicalPlan.getRangeOperations(table, firstRange.getColumn());
             return rangeOperations.processRangeNodes(firstRange, secondRange, logicalOperation);
         }else{
             return getFullRange();
@@ -339,8 +339,8 @@ public abstract class AbstractQueryExecutor {
         return getRangeNodeFromDataNode(dataNode);
     }
 
-    public abstract RangeNode getFullRange();
-    public abstract RangeNode getRangeNodeFromDataNode(DataNode dataNode);
+    public abstract <T extends Number & Comparable<T>> RangeNode<T> getFullRange();
+    public abstract <T extends Number & Comparable<T>> RangeNode<T> getRangeNodeFromDataNode(DataNode<?> dataNode);
 
     public void paginate(RangeNode<?> rangeNode) {
         this.physicalPlan = originalPhysicalPlan.paginate(rangeNode);

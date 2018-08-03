@@ -269,7 +269,7 @@ public abstract class PhysicalPlan extends TreeNode {
 
     public abstract List<String> getQueryCols(String table);
     
-    public abstract RangeOperations<?> getRangeOperations(String table, String column);
+    public abstract <T extends Number & Comparable<T>> RangeOperations<T> getRangeOperations(String table, String column);
     
     public abstract boolean tableExists(String table);
     
