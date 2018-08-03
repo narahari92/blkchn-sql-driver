@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.impetus.blkch.sql.generated.*;
+import com.impetus.blkch.sql.generated.BlkchnSqlParser.AffiliationContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.AliasedQueryContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.AliasedRelationContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.ArgParamContext;
@@ -53,6 +54,8 @@ import com.impetus.blkch.sql.generated.BlkchnSqlParser.CreateAssetContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.CreateAssetRuleContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.CreateFunctionContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.CreateFunctionRuleContext;
+import com.impetus.blkch.sql.generated.BlkchnSqlParser.CreateUserContext;
+import com.impetus.blkch.sql.generated.BlkchnSqlParser.CreateUserRuleContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.DecimalLiteralContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.DeleteFunctionContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.DeleteFunctionRuleContext;
@@ -110,6 +113,7 @@ import com.impetus.blkch.sql.generated.BlkchnSqlParser.RecordDelimiterContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.RelationContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.RowConstructorContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.SearchedCaseContext;
+import com.impetus.blkch.sql.generated.BlkchnSqlParser.SecretContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.SelectClauseContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.SetOperationContext;
 import com.impetus.blkch.sql.generated.BlkchnSqlParser.SetQuantifierContext;
@@ -945,5 +949,29 @@ public abstract class AbstractSyntaxTreeVisitor extends AbstractParseTreeVisitor
         return visitChildren(ctx);
     }
 
+    @Override
+    public LogicalPlan visitCreateUserRule(CreateUserRuleContext ctx) {
+        logger.trace("In visitCreateUserRule " + ctx.getText());
+        return visitChildren(ctx);
+    }
 
+    @Override
+    public LogicalPlan visitCreateUser(CreateUserContext ctx) {
+        logger.trace("In visitCreateUser " + ctx.getText());
+        return visitChildren(ctx);
+    }
+
+    @Override
+    public LogicalPlan visitSecret(SecretContext ctx) {
+        logger.trace("In visitSecret " + ctx.getText());
+        return visitChildren(ctx);
+    }
+
+    @Override
+    public LogicalPlan visitAffiliation(AffiliationContext ctx) {
+        logger.trace("In visitAffiliation " + ctx.getText());
+        return visitChildren(ctx);
+    }
+
+    
 }

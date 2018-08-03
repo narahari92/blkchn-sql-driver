@@ -25,6 +25,7 @@ import com.impetus.blkch.sql.function.UpgradeFunction;
 import com.impetus.blkch.sql.insert.Insert;
 import com.impetus.blkch.sql.query.Query;
 import com.impetus.blkch.sql.query.QueryItemInterface;
+import com.impetus.blkch.sql.user.CreateUser;
 
 public class LogicalPlan extends TreeNode implements QueryItemInterface {
 
@@ -47,6 +48,8 @@ public class LogicalPlan extends TreeNode implements QueryItemInterface {
     private DropAsset dropAsset;
     
     private UpgradeFunction upgradeFunction;
+    
+    private CreateUser createUser;
     
     private SQLType type;
 
@@ -132,6 +135,14 @@ public class LogicalPlan extends TreeNode implements QueryItemInterface {
         this.upgradeFunction = upgradeFunction;
     }
     
+    public void setCreateUser(CreateUser createUser) {
+        this.createUser = createUser;
+    }
+    
+    public CreateUser getCreateUser() {
+        return createUser;
+    }
+    
     public SQLType getType() {
         return type;
     }
@@ -166,7 +177,9 @@ public class LogicalPlan extends TreeNode implements QueryItemInterface {
         
         DROP_ASSET,
         
-        UPGRADE_FUNCTION
+        UPGRADE_FUNCTION,
+        
+        CREATE_USER
     }
 
 }

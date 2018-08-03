@@ -31,11 +31,11 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.web3j</groupId>
-            <artifactId>core</artifactId>
-            <version>3.4.0</version>
-        </dependency>
+       	        <dependency>
+            		<groupId>org.web3j</groupId>
+	                <artifactId>core</artifactId>
+            		<version>3.4.0</version>
+        	</dependency>
 		<dependency>
 			<groupId>org.specs2</groupId>
 			<artifactId>specs2-core_${scala.compat.version}</artifactId>

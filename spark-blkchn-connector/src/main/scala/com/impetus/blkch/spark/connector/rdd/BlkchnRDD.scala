@@ -3,7 +3,7 @@ package com.impetus.blkch.spark.connector.rdd
 import java.sql.{ResultSetMetaData, Types}
 
 import com.impetus.blkch.spark.connector.rdd.partitioner.BlkchnPartition
-import com.impetus.blkch.spark.connector.BlkchnConnector
+import com.impetus.blkch.spark.connector.{BlkchnConnector}
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema
@@ -13,8 +13,8 @@ import org.web3j.protocol.core.methods.response.EthBlock.TransactionResult
 import org.web3j.protocol.core.methods.response.Transaction
 import java.math.BigInteger
 import java.util
-
 import scala.collection.JavaConverters._
+
 import scala.reflect.ClassTag
 
 class BlkchnRDD[R: ClassTag](@transient sc: SparkContext,
@@ -69,9 +69,3 @@ class BlkchnRDD[R: ClassTag](@transient sc: SparkContext,
   }
 
 }
-
-
-
-
-
-

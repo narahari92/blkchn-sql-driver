@@ -345,6 +345,7 @@ public abstract class AbstractQueryExecutor {
     public void paginate(RangeNode<?> rangeNode) {
         this.physicalPlan = originalPhysicalPlan.paginate(rangeNode);
     }
+
     
     protected abstract DataNode<?> getDataNode(String table, String column, String value);
     
