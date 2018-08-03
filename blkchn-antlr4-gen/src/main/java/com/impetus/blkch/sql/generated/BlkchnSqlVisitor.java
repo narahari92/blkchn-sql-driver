@@ -141,6 +141,18 @@ public interface BlkchnSqlVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCreateAsset(BlkchnSqlParser.CreateAssetContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link BlkchnSqlParser#createFlag}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCreateFlag(BlkchnSqlParser.CreateFlagContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BlkchnSqlParser#upgradeFlag}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUpgradeFlag(BlkchnSqlParser.UpgradeFlagContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link BlkchnSqlParser#asset}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
