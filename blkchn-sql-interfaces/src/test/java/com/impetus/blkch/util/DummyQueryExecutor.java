@@ -33,11 +33,6 @@ public class DummyQueryExecutor extends AbstractQueryExecutor {
     }
 
     @Override
-    public RangeNode processDirectAPINodeForRange(DirectAPINode directAPINode) {
-        return null;
-    }
-
-    @Override
     public RangeNode getFullRange() {
         return null;
     }

@@ -288,12 +288,12 @@ public abstract class AbstractQueryExecutor {
         if(whereClause != null) {
         whereClause.traverse();
             if (this.physicalPlan.getWhereClause().hasChildType(LogicalOperation.class)) {
-                LogicalOperation logOpr = this.physicalPlan.getWhereClause().getChildType(LogicalOperation.class).get(0);
+                LogicalOperation logOpr = this.physicalPlan.getWhereClause().getChildType(LogicalOperation.class, 0);
                 return processLogicalOperationForRange(logOpr);
             } else if (this.physicalPlan.getWhereClause().hasChildType(DirectAPINode.class)) {
-                return processDirectAPINodeForRange(this.physicalPlan.getWhereClause().getChildType(DirectAPINode.class).get(0));
+                return processDirectAPINodeForRange(this.physicalPlan.getWhereClause().getChildType(DirectAPINode.class, 0));
             } else if (this.physicalPlan.getWhereClause().hasChildType(RangeNode.class)) {
-                return this.physicalPlan.getWhereClause().getChildType(RangeNode.class).get(0);
+                return this.physicalPlan.getWhereClause().getChildType(RangeNode.class, 0);
             } else {
                 return getFullRange();
             }
